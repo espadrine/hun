@@ -1,0 +1,26 @@
+{
+  "name": "hun",
+  "main": "hun.js",
+  "description": "An extensible, unreadable, streamed, unsafe templating language.",
+  "author": "Thaddee Tyl <thaddee.tyl@gmail.com> (http://espadrine.github.com/)",
+  "contributors": [
+    "Thaddee Tyl <thaddee.tyl@gmail.com>",
+    "Jan Keromnes <janx@linux.com>"
+  ],
+  "version": "13.03.11",
+  "homepage": "http://espadrine.github.com/hun/",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/espadrine/hun.git"
+  },
+  "scripts": {
+    "test": "node test-hun.js"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "optionalDependencies": {},
+  "engines": {
+    "node": ">=0.4.0"
+  },
+  "readmeFilename": "README.md"
+}
