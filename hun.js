@@ -257,7 +257,7 @@ Plate.parsers = {
 // Exportation World!
 //
 
-module.exports = format;
+module.exports = Plate.format;
 exports.format = Plate.format;
 exports.formatString = Plate.formatString;
 exports.macros = Plate.macros;

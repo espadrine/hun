@@ -1,6 +1,6 @@
-var hun = require ('./hun'),
-    Test = require ('./test'),
-    Stream = require ('stream');
+var hun = require ('./hun');
+var Test = require ('./test');
+var Stream = require ('stream');
 
 
 
@@ -9,9 +9,9 @@ var hun = require ('./hun'),
 var t = new Test ();
 
 function test (template, literal, expected, cb) {
-  var input = new Stream (),
-      output = new Stream (),
-      text = '';
+  var input = new Stream ();
+  var output = new Stream ();
+  var text = '';
 
   output.write = function (data) {
     text += '' + data;
@@ -22,7 +22,7 @@ function test (template, literal, expected, cb) {
     if (cb) cb ();
   });
 
-  hun.format (input, output, literal);
+  hun (input, output, literal);
   input.emit ('data', template);
   input.emit ('end');
 }
