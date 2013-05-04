@@ -1,6 +1,6 @@
-/* plate.js: templating language.
- * Copyright (c) 2011 Thaddee Tyl, Jan Keromnes. All rights reserved.
- * Code covered by the LGPL license. */
+// Templating language.
+// Copyright © 2011 Thaddee Tyl, Jan Keromnes. All rights reserved.
+// Code covered by the LGPL license.
 
 (function () {
 
@@ -10,9 +10,9 @@
 // Api World!
 //
 
-Plate = {};
+hun = {};
 
-Plate._escape = function (text) {
+hun._escape = function (text) {
   return (text? text: '').replace ('{{','{').replace ('}}','}');
 };
 
@@ -82,31 +82,31 @@ function fragparams (span) {
 //
 // input and output are two streams, one readable, the other writable.
 
-Plate.format = function (input, output, literal) {
+hun.format = function (input, output, literal) {
   var text = '';
   input.on ('data', function (data) {
     text += '' + data;
   });
   input.on ('end', function template () {
-    Plate.formatString (text, function write (text) {
+    hun.formatString (text, function write (text) {
       output.write (text);
     }, literal);
     output.end ();
   });
 };
 
-Plate.formatString = function (text, write, literal) {
+hun.formatString = function (text, write, literal) {
   var boundaries = toplevel (text),
       span = text.slice (boundaries[0] + 3, boundaries[1] - 1),
       macro = text[boundaries[0] + 2],
       params = fragparams(span);    // Fragment the parameters.
 
-  if (!macro) { write (Plate._escape (text)); return; }
+  if (!macro) { write (hun._escape (text)); return; }
 
   // Call the macro.
-  write (Plate._escape (text.slice (0, boundaries[0])));
+  write (hun._escape (text.slice (0, boundaries[0])));
   try {
-    Plate.macros[macro] (write, literal, params);
+    hun.macros[macro] (write, literal, params);
   } catch (e) {
     console.error ('Template error: macro "' + macro + '" didn\'t work.\n');
     console.error ('"' + e.message + '"');
@@ -114,14 +114,14 @@ Plate.formatString = function (text, write, literal) {
     console.error ('Literal:', literal);
   }
   if ((boundaries[1] += 1) <= text.length) {
-    Plate.formatString (text.slice (boundaries[1]), write, literal);
+    hun.formatString (text.slice (boundaries[1]), write, literal);
   }
 };
 
 // Helper function to parse simple expressions.
 // Can throw pretty easily if the template is too complex.
 // Also, using variables is a lot faster.
-Plate.value = function (literal, strval) {
+hun.value = function (literal, strval) {
   try {
     // Special-case faster, single variable access lookups.
     if (/^[a-zA-Z_\$]+$/.test(strval)) {
@@ -142,32 +142,32 @@ Plate.value = function (literal, strval) {
   return strval;
 };
 
-Plate.macros = {
+hun.macros = {
   '=': function (write, literal, params) {
     // Displaying a variable.
-    var parsedtext = Plate.value (literal, params[0]),
+    var parsedtext = hun.value (literal, params[0]),
         parsercalls = params.slice(1).map(function(el) {return el.split(' ');}),
         parsers = parsercalls.map(function(el) {return el[0];}),
         parsersparams = parsercalls.map(function(el) {return el.slice(1);});
     for (var i = 0; i < parsers.length; i++) {
-      if (Plate.parsers[parsers[i]] === undefined) {
+      if (hun.parsers[parsers[i]] === undefined) {
         console.error ('Template error: parser ' + parsers[i] + ' is missing.');
         return;
       }
-      parsedtext = Plate.parsers[parsers[i]] (parsedtext, parsersparams[i]);
+      parsedtext = hun.parsers[parsers[i]] (parsedtext, parsersparams[i]);
     }
     write (parsedtext);
   },
   '?': function (write, literal, params) {
     // If / then [ / else ].
-    var val = Plate.value (literal, params[0]);
+    var val = hun.value (literal, params[0]);
     if (val) {
-      Plate.formatString(params[1], write, literal);
-    } else if (params[2]) Plate.formatString(params[2], write, literal);
+      hun.formatString(params[1], write, literal);
+    } else if (params[2]) hun.formatString(params[2], write, literal);
   },
   '-': function (write, literal, params) {
     // Iterate through an object / an array / a string.
-    var val = Plate.value (literal, params[0]);
+    var val = hun.value (literal, params[0]);
     if (val === undefined) {
       console.error ('Template error: literal ' + JSON.stringify (params[0]) +
                    ' is missing.');
@@ -177,7 +177,7 @@ Plate.macros = {
     for (var i in val) {
       newliteral[params[1]] = val[i];
       newliteral[params[2]] = i;
-      Plate.formatString (params[3], write, literal);
+      hun.formatString (params[3], write, literal);
     }
   },
   '#': function () {},  // Comment.
@@ -188,24 +188,24 @@ Plate.macros = {
       var fs = require('fs');
       if (fs && fs.readFileSync) {
         var file = params[0].trim();
-        Plate.formatString (fs.readFileSync(file, 'utf8'), write, literal);
+        hun.formatString (fs.readFileSync(file, 'utf8'), write, literal);
       }
     }
     return '';
   },
   '!': function (write, literal, params) {
     // Add a macro from inside a template.
-    Plate.macros[params[0]] = Function ('write','literal','params', params[1]);
+    hun.macros[params[0]] = Function ('write','literal','params', params[1]);
   },
   '~': function (write, literal, params) {
     // Use a named macro.
-    write (Plate.macros[params[0]] (write, literal, params.slice (1))
+    write (hun.macros[params[0]] (write, literal, params.slice (1))
                   || '');
   }
 };
-Plate.macros['for'] = Plate.macros['-'];    // Useful alias.
+hun.macros['for'] = hun.macros['-'];    // Useful alias.
 
-Plate.parsers = {
+hun.parsers = {
   'plain': function (text) { return text; },
   'html': function (text) {
     return text.replace (/&/g,'&amp;').replace (/</g,'&lt;')
@@ -257,11 +257,11 @@ Plate.parsers = {
 // Exportation World!
 //
 
-module.exports = Plate.format;
-exports.format = Plate.format;
-exports.formatString = Plate.formatString;
-exports.macros = Plate.macros;
-exports.parsers = Plate.parsers;
+module.exports = hun.format;
+exports.format = hun.format;
+exports.formatString = hun.formatString;
+exports.macros = hun.macros;
+exports.parsers = hun.parsers;
 
 
 })();
