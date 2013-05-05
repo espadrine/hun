@@ -2,15 +2,11 @@
 // Copyright © 2011 Thaddee Tyl, Jan Keromnes. All rights reserved.
 // Code covered by the LGPL license.
 
-(function () {
-
-
-
 
 // Api World!
 //
 
-hun = {};
+var hun = {};
 
 hun._escape = function (text) {
   return (text? text: '').replace ('{{','{').replace ('}}','}');
@@ -258,10 +254,7 @@ hun.parsers = {
 //
 
 module.exports = hun.format;
-exports.format = hun.format;
-exports.formatString = hun.formatString;
-exports.macros = hun.macros;
-exports.parsers = hun.parsers;
-
-
-})();
+module.exports.format = hun.format;
+module.exports.formatString = hun.formatString;
+module.exports.macros = hun.macros;
+module.exports.parsers = hun.parsers;
