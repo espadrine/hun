@@ -1,5 +1,5 @@
 // Templating language.
-// Copyright © 2011 Thaddee Tyl, Jan Keromnes. All rights reserved.
+// Copyright © 2011-2013 Thaddee Tyl, Jan Keromnes. All rights reserved.
 // Code covered by the LGPL license.
 
 
